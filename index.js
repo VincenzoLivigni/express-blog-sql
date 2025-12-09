@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
 const port = 3000
+const db = require("./database/db_blog")
 
 const postsRouter = require("./routes/posts")                   // importo router dei post
 
