@@ -32,16 +32,43 @@ const index = (req, res) => {
 // show -> get
 const show = (req, res) => {
     const id = Number(req.params.id)
-    const foundPost = posts.find((post) => post.id === id)      // cerca il post corrispondente dall'array in base all'id
 
-    if (!foundPost)                                             // se il post non viene trovato (id non compreso nell'array)
-        return res.status(404).json({                           // 404 -> risponde con "non trovato"
-            error: true,
-            message: "post not found"                           // restituisce "post non trovato"
-        })
-    console.log(foundPost)
-    res.json(foundPost)                                         // restituisce il post trovato in formato Json
+    const sql = "SELECT id, title, content, image FROM posts WHERE id = ?"       // mostra il post con id specifico
+    console.log(sql, id)
+
+    connection.query(sql, [id], (err, results) => {            // mostra il post sul database prendendo l'id come parametro -- [id] sostituisce il "?"
+        if (err) {                                             // in caso di errore nella query
+            return res.status(500).json({                      // 500 -> risponde con "errore interno al server"
+                error: true,
+                message: err.message
+            })
+        }
+
+        if (results.length === 0)                              // se la query non trova il post con id specifico
+            return res.status(404).json({                      // 404 -> risponde con "non trovato"
+                error: true,
+                message: "post not found"
+            })
+
+        console.log(err, results[0])                           // stampa nel terminale il post trovato
+        res.json(results[0])                                   // restituisce il post trovato in formato Json
+    })
 }
+
+
+
+/*
+const foundPost = posts.find((post) => post.id === id)      // cerca il post corrispondente dall'array in base all'id
+
+if (!foundPost)                                             // se il post non viene trovato (id non compreso nell'array)
+    return res.status(404).json({                           // 404 -> risponde con "non trovato"
+        error: true,
+        message: "post not found"                           // restituisce "post non trovato"
+    })
+console.log(foundPost)
+res.json(foundPost)                                         // restituisce il post trovato in formato Json
+}
+*/
 
 // store -> post
 const store = (req, res) => {
