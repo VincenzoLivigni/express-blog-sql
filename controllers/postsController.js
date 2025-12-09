@@ -1,7 +1,24 @@
 const posts = require("../data/lista_posts")                    // importo l'array dei post
+const connection = require("../database/db_blog")
 
 // index -> get 
 const index = (req, res) => {
+    const sql = "SELECT id, title, content, image FROM posts"
+
+    connection.query(sql, (err, results) => {
+        if (err) {                                              // in caso di errore nella query
+            return res.status(500).json({                       // 500 -> risponde con "errore interno al server"
+                error: true,
+                message: "Error retrieving data from database",
+                dbError: err.message                            // mysql2 genera messaggio d'errore automatico
+            })
+        }
+        console.log(results)                                    // restituisce i risultati della query nel terminale
+        res.json(results);                                      // restituisce tutti i post in formato Json (postman)
+    })
+}
+
+/*
     const tag = req.query.tag                                   // prende il parametro ?tag= --- (query al posto di params)
     let filteredList = posts
 
@@ -10,7 +27,7 @@ const index = (req, res) => {
     }
     // console.log(posts)
     res.json(filteredList)                                      // restituisce tutti i post in formato Json - restituisce i post filtrati
-}
+*/
 
 // show -> get
 const show = (req, res) => {
